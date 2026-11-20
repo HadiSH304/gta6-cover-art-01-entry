@@ -1,7 +1,10 @@
-// One heavy colour grade over every photo panel, so different photos cohere
-// into one poster. Sunset is a warm photo grade, Neon Nights a magenta/cyan
-// night grade, and Poster is the field's #1 look: posterize + halftone dots +
-// duotone, built from raw ImageData so it runs with no library.
+// One colour grade over every photo panel, so different photos cohere
+// into one poster. Sunset is the default: a warm photographic grade that
+// keeps faces and skin reading as real photos. Neon Nights is a magenta/cyan
+// night grade. Poster is the comic-book look, softened in v2: a lighter
+// posterize blended back toward the real colours, so it never flattens a
+// face into a photocopy. All grades are built from raw ImageData or canvas
+// filters, with no library.
 
 export const GRADES = ['sunset', 'neon', 'poster'];
 
@@ -28,34 +31,37 @@ function duotoneRamp(lum) {
   return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
 }
 
-/** Posterize + duotone an ImageData in place, then stamp halftone dots over it. */
+/** Posterize + duotone an ImageData in place, then stamp halftone dots over it.
+ * The duotone is blended back toward the posterized original colours, so
+ * skin keeps its tone instead of turning flat magenta. */
 function posterGrade(image, width, height) {
   const data = image.data;
   const lum = new Float32Array(width * height);
+  const DUOTONE_MIX = 0.55;
   for (let i = 0; i < data.length; i += 4) {
-    const r = posterizeChannel(data[i], 4);
-    const g = posterizeChannel(data[i + 1], 4);
-    const b = posterizeChannel(data[i + 2], 4);
+    const r = posterizeChannel(data[i], 6);
+    const g = posterizeChannel(data[i + 1], 6);
+    const b = posterizeChannel(data[i + 2], 6);
     const l = 0.299 * r + 0.587 * g + 0.114 * b;
     lum[i / 4] = l;
     const [dr, dg, db] = duotoneRamp(l);
-    data[i] = dr;
-    data[i + 1] = dg;
-    data[i + 2] = db;
+    data[i] = dr * DUOTONE_MIX + r * (1 - DUOTONE_MIX);
+    data[i + 1] = dg * DUOTONE_MIX + g * (1 - DUOTONE_MIX);
+    data[i + 2] = db * DUOTONE_MIX + b * (1 - DUOTONE_MIX);
   }
   return lum;
 }
 
 /** Halftone dots: black dots whose size grows as the picture darkens. */
-function halftoneDots(ctx, lum, width, height, step) {
+function halftoneDots(ctx, lum, width, height, step, maxAlpha = 0.32, maxRadius = 0.42) {
   ctx.save();
   ctx.fillStyle = '#160818';
   for (let y = 0; y < height; y += step) {
     for (let x = 0; x < width; x += step) {
       const l = lum[Math.min(width * height - 1, (y + step / 2) * width + (x + step / 2)) | 0];
-      const radius = ((255 - l) / 255) * step * 0.42;
+      const radius = ((255 - l) / 255) * step * maxRadius;
       if (radius < 0.4) continue;
-      ctx.globalAlpha = 0.32;
+      ctx.globalAlpha = maxAlpha;
       ctx.beginPath();
       ctx.arc(x + step / 2, y + step / 2, radius, 0, Math.PI * 2);
       ctx.fill();
@@ -101,7 +107,7 @@ export function gradePanelCanvas(canvas, grade) {
     const lum = posterGrade(image, width, height);
     ctx.putImageData(image, 0, 0);
     const step = Math.max(5, Math.round(width / 260));
-    halftoneDots(ctx, lum, width, height, step);
+    halftoneDots(ctx, lum, width, height, step, 0.16, 0.3);
   }
   // A light vignette pulls every panel toward the same poster mood.
   const edge = ctx.createRadialGradient(

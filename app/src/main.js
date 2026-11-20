@@ -1,7 +1,8 @@
 // Leonida Cover Studio — wires the editor: photo panels with drag-to-pan
-// and wheel-to-zoom crops, the two-layer caption editor, grade presets,
-// layout choice and PNG export. A `?shot=` query sets up a fixed scene for
-// screenshots instead (./shots.js).
+// and wheel-to-zoom crops, per-panel caption chips, the two-layer title,
+// the poster devices (press quote, gold seal, barcode, billing block,
+// VOL. 1 ticket), grade presets, layout choice and PNG export. A `?shot=`
+// query sets up a fixed scene for screenshots instead (./shots.js).
 
 import { LAYOUTS } from './panels.js';
 import { drawCover } from './cover.js';
@@ -11,7 +12,7 @@ import { runShot } from './shots.js';
 export const SAMPLE_PHOTOS = ['portrait', 'palms', 'skyline', 'driver', 'pier', 'boulevard'];
 
 export const CAPTION_PRESETS = [
-  { title: 'LEONIDA', subtitle: 'vice city nights', tagline: 'EVERYTHING IN EXCESS' },
+  { title: 'LEONIDA', subtitle: 'vice city nights', tagline: 'FIVE FRIENDS · ONE COAST · NO WAY BACK' },
   { title: 'KEYS TO PARADISE', subtitle: 'one last score', tagline: 'GATEWAY TO PARADISE' },
   { title: 'OCEAN BEACH', subtitle: 'deco nights', tagline: 'VICE BEACH, LEONIDA' },
   { title: 'SUNSET HEIST', subtitle: 'ocean drive', tagline: 'IN STORES SOMEWHERE SOON' },
@@ -23,24 +24,45 @@ const canvas = document.getElementById('cover');
 const status = document.getElementById('status');
 const panelList = document.getElementById('panels');
 
+/** Default crops for a layout: each panel keeps its own tuned crop. */
 function defaultCrops(layout) {
   const crops = {};
-  for (const panel of layout) if (!panel.title) crops[panel.id] = { zoom: 1, ox: 0, oy: 0 };
+  for (const panel of layout) {
+    crops[panel.id] = { ...(panel.crop ?? { zoom: 1, ox: 0, oy: 0 }) };
+  }
   return crops;
+}
+
+/** Default on-cover captions for a layout, from the panel definitions. */
+function defaultCaptions(layout) {
+  const captions = {};
+  for (const panel of layout) {
+    captions[panel.id] = {
+      line1: panel.caption?.[0] ?? '',
+      line2: panel.caption?.[1] ?? '',
+    };
+  }
+  return captions;
 }
 
 export const state = {
   layout: LAYOUTS.collage,
   layoutName: 'collage',
-  grade: 'poster',
+  grade: 'sunset',
   photos: {},
   crops: defaultCrops(LAYOUTS.collage),
+  captions: defaultCaptions(LAYOUTS.collage),
   title: 'LEONIDA',
   subtitle: 'vice city nights',
-  tagline: 'EVERYTHING IN EXCESS',
-  badgeLine1: 'NEW',
-  badgeLine2: 'SUMMER 2026',
-  showBadge: true,
+  tagline: 'FIVE FRIENDS · ONE COAST · NO WAY BACK',
+  quote: 'PURE GOLDEN-HOUR MAYHEM',
+  quoteSource: 'THE HARBOR GAZETTE',
+  billing: 'A SUNSET PICTURES PRODUCTION · STARRING YOU · SHOT ON YOUR OWN CAMERA · GRADED BY HAND',
+  volume: 'VOL. 1',
+  comingSoon: 'COMING SOON',
+  sealLine1: 'ORIGINAL',
+  sealLine2: 'COVER ART',
+  showSeal: true,
   exportSize: '1920x1080',
 };
 
@@ -82,6 +104,20 @@ export async function fillSamples() {
   redraw();
 }
 
+/** Split one caption field ("ROLE · TAGLINE" or "PLACE — TIME") in two. */
+export function parsePanelCaption(text) {
+  const splitOn = (sep) => {
+    const at = text.indexOf(sep);
+    return at < 0 ? null : [text.slice(0, at).trim(), text.slice(at + sep.length).trim()];
+  };
+  return splitOn('·') ?? splitOn(' — ') ?? splitOn(' - ') ?? [text.trim(), ''];
+}
+
+/** One caption field's text for a panel, joined back for the input. */
+function captionFieldText(caption) {
+  return caption.line2 ? `${caption.line1} · ${caption.line2}` : caption.line1;
+}
+
 function buildPanelList() {
   panelList.innerHTML = '';
   for (const panel of state.layout) {
@@ -93,6 +129,17 @@ function buildPanelList() {
     name.className = 'panel-name';
     name.textContent = panel.label;
     name.addEventListener('click', () => { selectedPanel = panel.id; buildPanelList(); redraw(); });
+    const caption = document.createElement('input');
+    caption.type = 'text';
+    caption.className = 'panel-caption';
+    caption.maxLength = 48;
+    caption.value = captionFieldText(state.captions[panel.id]);
+    caption.setAttribute('aria-label', `${panel.label} caption`);
+    caption.addEventListener('input', () => {
+      const [line1, line2] = parsePanelCaption(caption.value);
+      state.captions[panel.id] = { line1, line2 };
+      redraw();
+    });
     const file = document.createElement('label');
     file.className = 'panel-file';
     file.textContent = 'Photo';
@@ -118,7 +165,7 @@ function buildPanelList() {
       status.textContent = 'One photo fills every panel.';
       redraw();
     });
-    row.append(name, file, fill);
+    row.append(name, caption, file, fill);
     panelList.appendChild(row);
   }
 }
@@ -130,7 +177,6 @@ function canvasPoint(e) {
 }
 
 function hitPanel(point) {
-  const gutter = Math.max(2, Math.round(canvas.width * 0.006));
   for (const panel of state.layout) {
     if (panel.title) continue;
     if (point.x >= panel.x && point.x <= panel.x + panel.w &&
@@ -177,8 +223,13 @@ function bindText(id, key) {
 const titleInput = bindText('title', 'title');
 const subtitleInput = bindText('subtitle', 'subtitle');
 const taglineInput = bindText('tagline', 'tagline');
-const badge1Input = bindText('badge1', 'badgeLine1');
-const badge2Input = bindText('badge2', 'badgeLine2');
+const quoteInput = bindText('quote', 'quote');
+const quoteSourceInput = bindText('quoteSource', 'quoteSource');
+const billingInput = bindText('billing', 'billing');
+const volumeInput = bindText('volume', 'volume');
+const comingSoonInput = bindText('comingSoon', 'comingSoon');
+const seal1Input = bindText('seal1', 'sealLine1');
+const seal2Input = bindText('seal2', 'sealLine2');
 
 document.getElementById('presets').addEventListener('click', (e) => {
   const button = e.target.closest('button[data-preset]');
@@ -206,12 +257,13 @@ document.getElementById('layout').addEventListener('change', (e) => {
   state.layoutName = e.target.value;
   state.layout = LAYOUTS[state.layoutName];
   state.crops = defaultCrops(state.layout);
+  state.captions = defaultCaptions(state.layout);
   buildPanelList();
   fillSamples();
 });
 
-document.getElementById('showBadge').addEventListener('change', (e) => {
-  state.showBadge = e.target.checked;
+document.getElementById('showSeal').addEventListener('change', (e) => {
+  state.showSeal = e.target.checked;
   redraw();
 });
 

@@ -5,25 +5,37 @@
 
 import { LAYOUTS } from './panels.js';
 
+/** Keep an editor input in sync with a shot's state value. */
+function syncInput(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value;
+}
+
 export async function runShot(shot, query, state, { loadSample, redraw, fillSamples }) {
   const canvas = document.getElementById('cover');
-  state.grade = query.get('grade') ?? 'poster';
+  state.grade = query.get('grade') ?? 'sunset';
   state.title = query.get('title') ?? 'LEONIDA';
   state.subtitle = query.get('subtitle') ?? 'vice city nights';
-  state.tagline = query.get('tagline') ?? 'EVERYTHING IN EXCESS';
+  state.tagline = query.get('tagline') ?? 'FIVE FRIENDS · ONE COAST · NO WAY BACK';
   if (query.get('layout')) {
     state.layoutName = query.get('layout');
     state.layout = LAYOUTS[state.layoutName];
   }
-  const titleEl = document.getElementById('title');
-  const subtitleEl = document.getElementById('subtitle');
-  const taglineEl = document.getElementById('tagline');
-  if (titleEl) titleEl.value = state.title;
-  if (subtitleEl) subtitleEl.value = state.subtitle;
-  if (taglineEl) taglineEl.value = state.tagline;
+  syncInput('title', state.title);
+  syncInput('subtitle', state.subtitle);
+  syncInput('tagline', state.tagline);
+  syncInput('quote', state.quote);
+  syncInput('quoteSource', state.quoteSource);
+  syncInput('billing', state.billing);
+  syncInput('volume', state.volume);
+  syncInput('comingSoon', state.comingSoon);
+  syncInput('seal1', state.sealLine1);
+  syncInput('seal2', state.sealLine2);
   document.querySelectorAll('#grades button').forEach((b) => {
     b.classList.toggle('active', b.dataset.grade === state.grade);
   });
+  const layoutSelect = document.getElementById('layout');
+  if (layoutSelect) layoutSelect.value = state.layoutName;
 
   await fillSamples();
   await document.fonts.load('100px Anton');

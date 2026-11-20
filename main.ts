@@ -1,16 +1,19 @@
-// Leonida Cover Studio — a gta6-cover-art-01 entry (Node 22, standard library
-// only): the app is this directory's app/ folder, plain static files a desktop
-// browser loads offline (app/index.html and its ES modules, the Anton and
-// Pacifico fonts under app/fonts/, no library and no network request), and the
-// program hands it in. It copies app/ and screenshots/ from beside this file
-// to /output and writes /output/dossier.json, the summary the judge reads,
-// with the vendored make.fun library. The app turns a person's own photos
-// into a multi-panel Vice City poster — an asymmetric collage with one hero
-// panel, a shared poster/sunset/neon grade, two-layer lettering, a title
-// panel, badge and tagline strip — exported as a PNG at 1920x1080, 1080x1080
-// or 1080x1350. Its six sample photos (app/samples/) were made with an image
-// model and are free to use. Put 3 or 4 PNG or JPEG screenshots in
-// screenshots/ (the first by name is the cover) and run it.
+// Leonida Cover Studio v2 — a gta6-cover-art-01 entry (Node 22, standard
+// library only): the app is this directory's app/ folder, plain static files
+// a desktop browser loads offline (app/index.html and its ES modules, the
+// Anton and Pacifico fonts under app/fonts/, no library and no network
+// request), and the program hands it in. It copies app/ and screenshots/
+// from beside this file to /output and writes /output/dossier.json, the
+// summary the judge reads, with the vendored make.fun library. The app turns
+// a person's own photos into a multi-panel Vice City poster — seven
+// captioned panels with a recurring cast, a warm photographic Sunset grade
+// (a softened Poster grade stays as an option), and a full-width title band
+// with a striped block title, an overlapping script subtitle, a press-quote
+// strip, a gold seal, a barcode, a billing block and a VOL. 1 ticket —
+// exported as a PNG at 1920x1080, 1080x1080 or 1080x1350. Its six sample
+// photos (app/samples/) were made with an image model and are free to use.
+// Put 3 or 4 PNG or JPEG screenshots in screenshots/ (the first by name is
+// the cover) and run it.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
