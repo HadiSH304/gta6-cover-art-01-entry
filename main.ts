@@ -1,10 +1,15 @@
-// A working gta6-cover-art-01 entry (Node 22, standard library only): the app is this directory's app/ folder, plain
-// static files a desktop browser loads offline (app/index.html and its ES modules, no library and no network
-// request), and the program hands it in. It copies app/ and screenshots/ from beside this file to /output and writes
-// /output/dossier.json, the summary the judge reads, with the vendored make.fun library. Only the plumbing, not the
-// cover art the bounty asks for: Cover Snap, a plain one-photo square cover with a sunset tint and a bold caption,
-// exported as a 1080 x 1080 PNG. Its two sample photos (app/samples/) were made for make.fun with an image model and
-// are free to use. Build your own GTA-style cover maker in its place, put your 3 or 4 PNG or JPEG screenshots in
+// Leonida Cover Studio — a gta6-cover-art-01 entry (Node 22, standard library
+// only): the app is this directory's app/ folder, plain static files a desktop
+// browser loads offline (app/index.html and its ES modules, the Anton and
+// Pacifico fonts under app/fonts/, no library and no network request), and the
+// program hands it in. It copies app/ and screenshots/ from beside this file
+// to /output and writes /output/dossier.json, the summary the judge reads,
+// with the vendored make.fun library. The app turns a person's own photos
+// into a multi-panel Vice City poster — an asymmetric collage with one hero
+// panel, a shared poster/sunset/neon grade, two-layer lettering, a title
+// panel, badge and tagline strip — exported as a PNG at 1920x1080, 1080x1080
+// or 1080x1350. Its six sample photos (app/samples/) were made with an image
+// model and are free to use. Put 3 or 4 PNG or JPEG screenshots in
 // screenshots/ (the first by name is the cover) and run it.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
@@ -16,13 +21,23 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
 
+// The entry's own name, kept beside the copy so the dossier and the app agree.
+const APP_TITLE = 'Leonida Cover Studio';
+
 const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
+/** Copy one entry directory (app/ or screenshots/) into /output. */
+function copyEntry(name) {
+  const source = join(here, name);
+  const target = join(out, name);
+  mkdirSync(target, { recursive: true });
+  if (existsSync(source)) cpSync(source, target, { recursive: true });
+}
+
 mkdirSync(out, { recursive: true });
-cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });
-mkdirSync(join(out, 'screenshots'), { recursive: true });
-if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
+copyEntry('app');
+copyEntry('screenshots');
 
 // The scorer's own caps (reference/gate.json): only text_max_bytes shapes the bytes; the others refuse an entry the
 // scorer would refuse (more than 4 screenshots or one over 256 KiB; more than 993 files in app/ or 48 MiB of app
@@ -38,3 +53,5 @@ writeFileSync(
     app_path_max_bytes: 1000,
   }),
 );
+
+console.log(`${APP_TITLE}: wrote ${out}`);

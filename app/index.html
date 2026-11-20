@@ -3,20 +3,73 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cover Snap</title>
+<title>Leonida Cover Studio — GTA-style cover art from your photos</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <main class="app">
-  <section class="controls">
-    <h1>Cover Snap</h1>
-    <p>A photo and a caption, made into a square cover.</p>
-    <label>Photo <input id="photo" type="file" accept="image/*"></label>
-    <label>Caption <input id="caption" type="text" maxlength="40" value="Sunset Heist"></label>
-    <button id="export" type="button">Export PNG 1080 x 1080</button>
-    <p id="status" role="status"></p>
+  <section class="controls" aria-label="Cover controls">
+    <h1>Leonida Cover Studio</h1>
+    <p class="lede">Your photos, six panels, one sunset grade — a Vice City poster
+    in three steps. Nothing uploads; the PNG is made on your machine.</p>
+
+    <div class="group">
+      <h2>1 · Photos</h2>
+      <p class="hint">Click a panel, then pick its photo — or drag a photo onto
+      the preview. Drag on a panel to pan, scroll to zoom.</p>
+      <div id="panels"></div>
+      <button id="loadSamples" type="button">Load the six sample photos</button>
+    </div>
+
+    <div class="group">
+      <h2>2 · Caption</h2>
+      <label>Title <input id="title" type="text" maxlength="24" value="LEONIDA"></label>
+      <label>Subtitle <input id="subtitle" type="text" maxlength="32" value="vice city nights"></label>
+      <label>Tagline strip <input id="tagline" type="text" maxlength="40" value="EVERYTHING IN EXCESS"></label>
+      <div class="row">
+        <label>Badge top <input id="badge1" type="text" maxlength="10" value="NEW"></label>
+        <label>Badge bottom <input id="badge2" type="text" maxlength="14" value="SUMMER 2026"></label>
+      </div>
+      <label class="check"><input id="showBadge" type="checkbox" checked> Show starburst badge</label>
+      <div id="presets" class="presets">
+        <button type="button" data-preset="0">Leonida</button>
+        <button type="button" data-preset="1">Keys to Paradise</button>
+        <button type="button" data-preset="2">Ocean Beach</button>
+        <button type="button" data-preset="3">Sunset Heist</button>
+        <button type="button" data-preset="4">Grassrivers</button>
+        <button type="button" data-preset="5">Starfish Island</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>3 · Grade &amp; layout</h2>
+      <div id="grades" class="choices">
+        <button type="button" data-grade="poster" class="active">Poster</button>
+        <button type="button" data-grade="sunset">Sunset</button>
+        <button type="button" data-grade="neon">Neon Nights</button>
+      </div>
+      <label>Layout
+        <select id="layout">
+          <option value="collage" selected>Vice collage (hero + stacks)</option>
+          <option value="grid">Poster grid (3 × 2)</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="group">
+      <h2>Export</h2>
+      <div id="sizes" class="choices">
+        <button type="button" data-size="1920x1080" class="active">1920 × 1080</button>
+        <button type="button" data-size="1080x1080">1080 × 1080</button>
+        <button type="button" data-size="1080x1350">1080 × 1350</button>
+      </div>
+      <button id="export" type="button" class="export">Export PNG</button>
+      <p id="status" role="status"></p>
+    </div>
   </section>
-  <canvas id="cover" width="1080" height="1080" aria-label="The cover"></canvas>
+  <section class="preview" aria-label="Live cover preview">
+    <canvas id="cover" width="960" height="540" aria-label="The cover"></canvas>
+  </section>
 </main>
 <script type="module" src="./src/main.js"></script>
 </body>
