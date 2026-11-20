@@ -52,12 +52,12 @@ function drawPhotoPanel(mainCtx, photo, rect, crop, grade, scratch) {
 
 /** Title + subtitle + tagline inside a title panel rect. */
 function drawTitleInside(ctx, rect, state) {
-  const pad = rect.w * 0.04;
+  const pad = rect.w * 0.07;
   const stripH = rect.h * 0.17;
   const textH = rect.h - stripH;
   const titleSize = drawBlockTitle(
     ctx, state.title, rect.x + rect.w / 2,
-    rect.y + textH * 0.52, rect.w - pad * 2, textH * 0.4,
+    rect.y + textH * 0.52, rect.w - pad * 2, textH * 0.36,
   );
   drawScriptSubtitle(
     ctx, state.subtitle, rect.x + rect.w / 2,

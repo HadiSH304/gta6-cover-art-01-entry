@@ -243,11 +243,11 @@ canvas.addEventListener('drop', async (e) => {
   redraw();
 });
 
+buildPanelList();
 const shot = new URLSearchParams(location.search).get('shot');
 if (shot) {
   runShot(shot, new URLSearchParams(location.search), state, { loadSample, redraw, fillSamples });
 } else {
   document.fonts.ready.then(() => redraw());
-  buildPanelList();
   redraw();
 }

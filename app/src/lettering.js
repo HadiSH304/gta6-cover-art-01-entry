@@ -66,7 +66,7 @@ export function drawPalm(ctx, x, y, height, color = '#1c0a2e') {
     const angle = Math.PI * (0.08 + (i / 6) * 0.84);
     const len = height * (0.42 + (i % 2) * 0.08);
     const endX = topX + Math.cos(angle) * len;
-    const endY = topY + Math.sin(angle) * len * 0.55 + height * 0.1;
+    const endY = topY + Math.sin(angle) * len * 0.72 + height * 0.12;
     ctx.beginPath();
     ctx.moveTo(topX, topY);
     ctx.quadraticCurveTo(
@@ -89,15 +89,17 @@ export function drawTitlePanelBackdrop(ctx, rect) {
   sky.addColorStop(1, '#ffd76a');
   ctx.fillStyle = sky;
   ctx.fillRect(x, y, w, h);
-  const sunR = h * 0.2;
+  // Sun disc sits upper-right, clear of the centred title and subtitle.
+  const sunR = h * 0.12;
   ctx.fillStyle = '#fff3c4';
   ctx.beginPath();
-  ctx.arc(x + w * 0.5, y + h * 0.46, sunR, 0, Math.PI * 2);
+  ctx.arc(x + w * 0.88, y + h * 0.24, sunR, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#1c0a2e';
   ctx.fillRect(x, y + h * 0.82, w, h * 0.18);
-  drawPalm(ctx, x + w * 0.06, y + h * 0.86, h * 0.62);
-  drawPalm(ctx, x + w * 0.94, y + h * 0.86, h * 0.55);
+  // Palms stay low and at the edges so their fronds never cross the title.
+  drawPalm(ctx, x + w * 0.05, y + h * 0.88, h * 0.42);
+  drawPalm(ctx, x + w * 0.95, y + h * 0.88, h * 0.38);
   ctx.fillStyle = 'rgba(28, 10, 46, 0.25)';
   ctx.fillRect(x, y, w, h * 0.1);
 }
