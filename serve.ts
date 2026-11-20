@@ -8,10 +8,14 @@ import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(fileURLToPath(new URL('./app', import.meta.url)));
-const args = process.argv.slice(2);
-const portIndex = args.indexOf('--port');
-const requested = portIndex === -1 ? 8080 : Number(args[portIndex + 1]);
-const port = Number.isInteger(requested) && requested > 0 && requested < 65536 ? requested : 8080;
+const port = resolvePort(process.argv.slice(2));
+
+/** Pick the port to listen on: `--port <n>` when given and valid, else 8080. */
+function resolvePort(args) {
+  const portIndex = args.indexOf('--port');
+  const requested = portIndex === -1 ? 8080 : Number(args[portIndex + 1]);
+  return Number.isInteger(requested) && requested > 0 && requested < 65536 ? requested : 8080;
+}
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -38,6 +42,11 @@ const MIME: Record<string, string> = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
+/** MIME type for `file` by extension; unknown types are generic binary. */
+function mimeFor(file: string): string {
+  return MIME[extname(file).toLowerCase()] ?? 'application/octet-stream';
+}
+
 createServer((request, response) => {
   const url = new URL(request.url ?? '/', 'http://localhost');
   let pathname: string;
@@ -63,7 +72,7 @@ createServer((request, response) => {
     return;
   }
   response.writeHead(200, {
-    'content-type': MIME[extname(file).toLowerCase()] ?? 'application/octet-stream',
+    'content-type': mimeFor(file),
     'content-length': size,
     'cache-control': 'no-store',
   });

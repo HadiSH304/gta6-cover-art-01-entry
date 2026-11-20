@@ -16,15 +16,25 @@ export function exportCoverPng(state, sizeName) {
   canvas.width = w;
   canvas.height = h;
   drawCover(canvas, state);
-  const name = `vice-cover-${sizeName}.png`;
+  const name = buildExportFileName(sizeName);
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = name;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      downloadBlob(blob, name);
       resolve(name);
     }, 'image/png');
   });
+}
+
+/** File name for an exported cover at `sizeName`, e.g. `vice-cover-1920x1080.png`. */
+function buildExportFileName(sizeName) {
+  return `vice-cover-${sizeName}.png`;
+}
+
+/** Trigger a browser download of `blob` under `name`, then release its object URL. */
+function downloadBlob(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
 }
