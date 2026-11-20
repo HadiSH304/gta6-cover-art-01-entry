@@ -12,8 +12,10 @@
 // strip, a gold seal, a barcode, a billing block and a VOL. 1 ticket —
 // exported as a PNG at 1920x1080, 1080x1080 or 1080x1350. Its six sample
 // photos (app/samples/) were made with an image model and are free to use.
-// Put 3 or 4 PNG or JPEG screenshots in screenshots/ (the first by name is
-// the cover) and run it.
+// The editor keeps its caption and poster-device fields in two-column rows
+// so the whole editor fits one screen beside the live preview. Put 3 or 4
+// PNG or JPEG screenshots in screenshots/ (the first by name is the cover)
+// and run it.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:

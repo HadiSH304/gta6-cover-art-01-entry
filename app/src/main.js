@@ -134,10 +134,12 @@ function buildPanelList() {
     caption.className = 'panel-caption';
     caption.maxLength = 48;
     caption.value = captionFieldText(state.captions[panel.id]);
+    caption.title = caption.value;
     caption.setAttribute('aria-label', `${panel.label} caption`);
     caption.addEventListener('input', () => {
       const [line1, line2] = parsePanelCaption(caption.value);
       state.captions[panel.id] = { line1, line2 };
+      caption.title = caption.value;
       redraw();
     });
     const file = document.createElement('label');
@@ -258,6 +260,9 @@ document.getElementById('layout').addEventListener('change', (e) => {
   state.layout = LAYOUTS[state.layoutName];
   state.crops = defaultCrops(state.layout);
   state.captions = defaultCaptions(state.layout);
+  // The new layout may not have the selected panel (the close-up exists
+  // only in the collage), so the selection restarts at the hero.
+  selectedPanel = 'hero';
   buildPanelList();
   fillSamples();
 });

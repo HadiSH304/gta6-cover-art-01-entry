@@ -21,7 +21,7 @@ export const COLLAGE = [
   { id: 'boulevard', label: 'Boulevard', x: 0.536, y: 0.377, w: 0.224, h: 0.343, sample: 'boulevard',
     caption: ['THE INSIDER', 'NO WITNESSES'], crop: { zoom: 1, ox: 0, oy: 0 } },
   // The same man as Driver, tight on his face: the cast recurs across panels.
-  { id: 'driverClose', label: 'Driver close-up', x: 0.766, y: 0.377, w: 0.234, h: 0.343, sample: 'driver',
+  { id: 'driverClose', label: 'Close-up', x: 0.766, y: 0.377, w: 0.234, h: 0.343, sample: 'driver',
     caption: ['OCEAN DRIVE', '9:15 PM — LIGHTS OUT'], crop: { zoom: 2, ox: -0.5, oy: 0.27 } },
 ];
 

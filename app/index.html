@@ -10,25 +10,27 @@
 <main class="app">
   <section class="controls" aria-label="Cover controls">
     <h1>Leonida Cover Studio</h1>
-    <p class="lede">Your photos, seven panels, one sunset grade — a Vice City
-    poster in three steps. Nothing uploads; the PNG is made on your machine.</p>
+    <p class="lede">Seven panels, one sunset grade — a Vice City poster in three steps.</p>
 
     <div class="group">
       <h2>1 · Photos &amp; captions</h2>
-      <p class="hint">Click a panel, then pick its photo — or drag a photo onto
-      the preview. Drag on a panel to pan, scroll to zoom. Each panel's caption
-      is drawn on the cover: role · tagline, or place — time.</p>
+      <p class="hint">Click a panel, then pick its photo — or drag one onto
+      the preview. Drag to pan, scroll to zoom.</p>
       <div id="panels"></div>
       <button id="loadSamples" type="button">Load the sample photos</button>
     </div>
 
     <div class="group">
       <h2>2 · Caption</h2>
-      <label>Title <input id="title" type="text" maxlength="24" value="LEONIDA"></label>
-      <label>Subtitle <input id="subtitle" type="text" maxlength="32" value="vice city nights"></label>
+      <div class="row">
+        <label>Title <input id="title" type="text" maxlength="24" value="LEONIDA"></label>
+        <label>Subtitle <input id="subtitle" type="text" maxlength="32" value="vice city nights"></label>
+      </div>
       <label>Tagline bar <input id="tagline" type="text" maxlength="48" value="FIVE FRIENDS · ONE COAST · NO WAY BACK"></label>
-      <label>Press quote <input id="quote" type="text" maxlength="40" value="PURE GOLDEN-HOUR MAYHEM"></label>
-      <label>Quote source <input id="quoteSource" type="text" maxlength="32" value="THE HARBOR GAZETTE"></label>
+      <div class="row">
+        <label>Press quote <input id="quote" type="text" maxlength="40" value="PURE GOLDEN-HOUR MAYHEM"></label>
+        <label>Quote source <input id="quoteSource" type="text" maxlength="32" value="THE HARBOR GAZETTE"></label>
+      </div>
       <div id="presets" class="presets">
         <button type="button" data-preset="0">Leonida</button>
         <button type="button" data-preset="1">Keys to Paradise</button>
@@ -54,7 +56,7 @@
     </div>
 
     <div class="group">
-      <h2>4 · Grade &amp; layout</h2>
+      <h2>4 · Grade, layout &amp; export</h2>
       <div id="grades" class="choices">
         <button type="button" data-grade="sunset" class="active">Sunset</button>
         <button type="button" data-grade="poster">Poster</button>
@@ -66,10 +68,6 @@
           <option value="grid">Poster grid (3 × 2)</option>
         </select>
       </label>
-    </div>
-
-    <div class="group">
-      <h2>Export</h2>
       <div id="sizes" class="choices">
         <button type="button" data-size="1920x1080" class="active">1920 × 1080</button>
         <button type="button" data-size="1080x1080">1080 × 1080</button>
